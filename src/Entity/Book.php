@@ -1,45 +1,109 @@
 <?php
+
 namespace App\Entity;
 
+use App\Repository\BookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-class Book {
+#[ORM\Entity(repositoryClass: BookRepository::class)]
+class Book
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    public $a; // ID
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    public $b; // Titre
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    public $c; // Auteur
+    #[ORM\Column(length: 255)]
+    private ?string $author = null;
 
-    #[ORM\Column(type: "boolean")]
-    public $d = false; // Statut d'emprunt
+    #[ORM\Column]
+    private ?bool $isBorrowed = null;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    public $e; // Date d'emprunt
+    /**
+     * @var Collection<int, Loan>
+     */
+    #[ORM\OneToMany(targetEntity: Loan::class, mappedBy: 'book')]
+    private Collection $loans;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    public $f; // Date de retour
-
-    public function g() { // Emprunter un livre
-        if ($this->d) {
-            return "Déjà pris.";
-        }
-        $this->d = true;
-        $this->e = new \DateTime();
-        return "Pris.";
+    public function __construct()
+    {
+        $this->loans = new ArrayCollection();
     }
 
-    public function h() { // Retourner un livre
-        if (!$this->d) {
-            return "Non emprunté.";
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(string $author): static
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    public function isBorrowed(): ?bool
+    {
+        return $this->isBorrowed;
+    }
+
+    public function setIsBorrowed(bool $isBorrowed): static
+    {
+        $this->isBorrowed = $isBorrowed;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Loan>
+     */
+    public function getLoans(): Collection
+    {
+        return $this->loans;
+    }
+
+    public function addLoan(Loan $loan): static
+    {
+        if (!$this->loans->contains($loan)) {
+            $this->loans->add($loan);
+            $loan->setBook($this);
         }
-        $this->d = false;
-        $this->f = new \DateTime();
-        return "Retourné.";
+
+        return $this;
+    }
+
+    public function removeLoan(Loan $loan): static
+    {
+        if ($this->loans->removeElement($loan)) {
+            // set the owning side to null (unless already changed)
+            if ($loan->getBook() === $this) {
+                $loan->setBook(null);
+            }
+        }
+
+        return $this;
     }
 }

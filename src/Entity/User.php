@@ -1,35 +1,78 @@
 <?php
+
 namespace App\Entity;
 
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
-class User {
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+class User
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    public $x; // ID de l'utilisateur
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    public $y; // Nom de l'utilisateur
+    #[ORM\Column(length: 255)]
+    private ?string $userName = null;
 
-    #[ORM\Column(type: "array")]
-    public $z = []; // Liste des livres empruntés
+    /**
+     * @var Collection<int, Loan>
+     */
+    #[ORM\OneToMany(targetEntity: Loan::class, mappedBy: 'borrower')]
+    private Collection $loans;
 
-    public function i($b) {
-        if (count($this->z) >= 3) {
-            return "Trop de livres.";
-        }
-        $this->z[] = $b;
-        return "OK.";
+    public function __construct()
+    {
+        $this->loans = new ArrayCollection();
     }
 
-    public function j($b) {
-        $n = array_search($b, $this->z);
-        if ($n !== false) {
-            unset($this->z[$n]);
-            return "Livre rendu.";
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUserName(): ?string
+    {
+        return $this->userName;
+    }
+
+    public function setUserName(string $userName): static
+    {
+        $this->userName = $userName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Loan>
+     */
+    public function getLoans(): Collection
+    {
+        return $this->loans;
+    }
+
+    public function addLoan(Loan $loan): static
+    {
+        if (!$this->loans->contains($loan)) {
+            $this->loans->add($loan);
+            $loan->setBorrower($this);
         }
-        return "Pas trouvé.";
+
+        return $this;
+    }
+
+    public function removeLoan(Loan $loan): static
+    {
+        if ($this->loans->removeElement($loan)) {
+            // set the owning side to null (unless already changed)
+            if ($loan->getBorrower() === $this) {
+                $loan->setBorrower(null);
+            }
+        }
+
+        return $this;
     }
 }

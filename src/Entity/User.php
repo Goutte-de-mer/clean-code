@@ -14,6 +14,7 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['loan:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

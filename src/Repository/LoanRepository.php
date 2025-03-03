@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Loan;
+use App\Entity\Book;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -26,6 +28,19 @@ class LoanRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findCurrentLoansByBookAndUser(int $bookId, int $userId): ?Loan
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.book = :bookId')
+            ->andWhere('l.actualReturnDate IS NULL')
+            ->andWhere('l.borrower = :userId')
+            ->setParameter('bookId', $bookId)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 
 
     //    /**

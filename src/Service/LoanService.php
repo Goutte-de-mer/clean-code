@@ -55,4 +55,22 @@ class LoanService
         $this->entityManager->flush();
         return $loan;
     }
+
+    // Return a book
+    public function returnBook(Loan $loan): Loan
+    {
+        $book = $loan->getBook();
+        if (!$book->isBorrowed()) {
+            throw new \Exception('Le livre est déjà marqué comme disponible.');
+        }
+        $book->setIsBorrowed(false);
+
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
+
+        $loan->setActualReturnDate(new \DateTimeImmutable());
+        $this->entityManager->persist($loan);
+        $this->entityManager->flush();
+        return $loan;
+    }
 }

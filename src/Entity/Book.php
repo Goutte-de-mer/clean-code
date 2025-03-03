@@ -15,6 +15,7 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['book:read', 'loan:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

@@ -31,7 +31,6 @@ class BookFixtures extends Fixture
             ['title' => 'Moby-Dick', 'author' => 'Herman Melville'],
             ['title' => 'Les Trois Mousquetaires', 'author' => 'Alexandre Dumas'],
             ['title' => 'Ὀδύσσεια', 'author' => 'Homer'],
-            ['title' => 'Harry Potter and the Philosopher\'s Stone', 'author' => 'J.K. Rowling'],
             ['title' => 'The Lord of the Rings', 'author' => 'J.R.R. Tolkien'],
             ['title' => 'Le Petit Prince', 'author' => 'Antoine de Saint-Exupéry'],
             ['title' => 'O Alquimista', 'author' => 'Paulo Coelho'],

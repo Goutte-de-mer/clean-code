@@ -14,10 +14,12 @@ use App\Repository\BookRepository;
 final class BookController extends AbstractController
 {
     private BookService $bookService;
+    private BookRepository $bookRepository;
 
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService, BookRepository $bookRepository)
     {
         $this->bookService = $bookService;
+        $this->bookRepository = $bookRepository;
     }
 
     #[Route('/available', methods: ['GET'])]
@@ -66,5 +68,29 @@ final class BookController extends AbstractController
                 'details' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    #[Route("/search/author/{author}", methods: ["GET"], requirements: ["author" => "[a-zA-Z\s]+"])]
+    public function searchByAuthor(string $author): JsonResponse
+    {
+        $booksByAuthor = $this->bookRepository->findBooksByAuthorLike($author);
+
+        if (count($booksByAuthor) === 0) {
+            return $this->json(['message' => 'Aucun livre trouvé pour cet auteur'], 404);
+        }
+
+        return $this->json($booksByAuthor, 200, [], ['groups' => 'book:read']);
+    }
+
+    #[Route("/search/title/{title}", methods: ["GET"], requirements: ["title" => "[a-zA-Z\s]+"])]
+    public function searchByTitle(string $title): JsonResponse
+    {
+        $bookByTitle = $this->bookRepository->findBooksByTitleLike($title);
+
+        if (!$bookByTitle) {
+            return $this->json(['message' => 'Aucun livre trouvé pour ce titre'], 404);
+        }
+
+        return $this->json($bookByTitle, 200, [], ['groups' => 'book:read']);
     }
 }

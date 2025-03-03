@@ -67,20 +67,4 @@ final class BookController extends AbstractController
             ], 500);
         }
     }
-
-    #[Route('/delete-book/{id}', methods: ['DELETE'])]
-    public function deleteBook($id): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Livre supprimé avec succès!',
-        ]);
-    }
-
-    #[Route('/update-book/{id}', methods: ['PUT'])]
-    public function updateBook($id): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Livre mis à jour avec succès!',
-        ]);
-    }
 }

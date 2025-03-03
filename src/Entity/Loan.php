@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LoanRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LoanRepository::class)]
 class Loan
@@ -16,19 +17,24 @@ class Loan
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['loan:read'])]
     private ?User $borrower = null;
 
     #[ORM\ManyToOne(inversedBy: 'loans')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['loan:read'])]
     private ?Book $book = null;
 
     #[ORM\Column]
+    #[Groups(['loan:read'])]
     private ?\DateTimeImmutable $borrowedAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['loan:read'])]
     private ?\DateTimeInterface $expectedReturnDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['loan:read'])]
     private ?\DateTimeInterface $actualReturnDate = null;
 
     public function getId(): ?int

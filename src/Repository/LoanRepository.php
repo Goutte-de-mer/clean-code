@@ -16,6 +16,18 @@ class LoanRepository extends ServiceEntityRepository
         parent::__construct($registry, Loan::class);
     }
 
+    // countCurrentLoansByUserId
+    public function countCurrentLoansByUserId(int $userId): int
+    {
+        return (int) $this->createQueryBuilder('l')
+            ->select('COUNT(l.id)')
+            ->where('l.borrower = :userId AND l.actualReturnDate IS NULL')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
     //    /**
     //     * @return Loan[] Returns an array of Loan objects
     //     */

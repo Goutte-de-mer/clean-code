@@ -16,6 +16,14 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
+    public function findByTitleAndAuthor(string $title, string $author): ?Book
+    {
+        return $this->findOneBy([
+            'title' => $title,
+            'author' => $author
+        ]);
+    }
+
     //    /**
     //     * @return Book[] Returns an array of Book objects
     //     */

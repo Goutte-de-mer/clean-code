@@ -19,6 +19,12 @@ class BookService
         $this->bookRepository = $bookRepository;
     }
 
+    /**
+     * Valide les données d'un livre avant création.
+     *
+     * @param array $data
+     * @return array Retourne un tableau d'erreurs, vide si aucune erreur.
+     */
     public function validateBookData(array $data): array
     {
         $errors = [];
@@ -34,12 +40,25 @@ class BookService
         return $errors;
     }
 
+    /**
+     * Vérifie si un livre existe déjà dans la base de données.
+     *
+     * @param string $title Titre du livre
+     * @param string $author Auteur du livre
+     * @return bool Retourne true si le livre existe, sinon false.
+     */
     public function bookExists(string $title, string $author): bool
     {
         $existingBook = $this->bookRepository->findByTitleAndAuthor($title, $author);
         return $existingBook !== null;
     }
 
+    /**
+     * Crée un nouveau livre et l'enregistre en base de données.
+     *
+     * @param array $data Données du livre
+     * @return Book Le livre créé.
+     */
     public function createBook(array $data): Book
     {
         $book = new Book();

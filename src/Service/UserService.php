@@ -20,6 +20,12 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * Vérifie si un utilisateur existe dans la base de données.
+     *
+     * @param int $userId ID de l'utilisateur à vérifier.
+     * @return bool Retourne true si l'utilisateur existe, sinon false.
+     */
     public function userExists(int $userId): bool
     {
         $user = $this->userRepository->find($userId);

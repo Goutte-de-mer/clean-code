@@ -10,18 +10,33 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Service\BookService;
 use App\Repository\BookRepository;
 
+/**
+ * Contrôleur gérant les opérations liées aux livres.
+ * Permet de récupérer les livres disponibles, d'ajouter un livre,
+ * et de rechercher des livres par auteur ou par titre.
+ */
 #[Route("/book")]
 final class BookController extends AbstractController
 {
     private BookService $bookService;
     private BookRepository $bookRepository;
 
+    /**
+     * Injecte les services nécessaires dans le contrôleur.
+     */
     public function __construct(BookService $bookService, BookRepository $bookRepository)
     {
         $this->bookService = $bookService;
         $this->bookRepository = $bookRepository;
     }
 
+    /**
+     * Récupère la liste des livres disponibles dans la bibliothèque.
+     *
+     * @Route("/available", methods={"GET"})
+     * @param BookRepository $bookRepository
+     * @return JsonResponse
+     */
     #[Route('/available', methods: ['GET'])]
     public function getAvailableBooks(BookRepository $bookRepository): JsonResponse
     {
@@ -33,6 +48,13 @@ final class BookController extends AbstractController
         return $this->json($availableBooks, 200, [], ['groups' => 'book:read']);
     }
 
+    /**
+     * Ajoute un nouveau livre à la bibliothèque.
+     *
+     * @Route("/add", methods={"POST"})
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/add', methods: ['POST'])]
     public function addBook(Request $request): JsonResponse
     {
@@ -70,6 +92,13 @@ final class BookController extends AbstractController
         }
     }
 
+    /**
+     * Recherche des livres par auteur.
+     *
+     * @Route("/search/author/{author}", methods={"GET"}, requirements={"author"="[a-zA-Z\\s]+"})
+     * @param string $author
+     * @return JsonResponse
+     */
     #[Route("/search/author/{author}", methods: ["GET"], requirements: ["author" => "[a-zA-Z\s]+"])]
     public function searchByAuthor(string $author): JsonResponse
     {
@@ -82,6 +111,13 @@ final class BookController extends AbstractController
         return $this->json($booksByAuthor, 200, [], ['groups' => 'book:read']);
     }
 
+    /**
+     * Recherche des livres par titre.
+     *
+     * @Route("/search/title/{title}", methods={"GET"}, requirements={"title"="[a-zA-Z\\s]+"})
+     * @param string $title
+     * @return JsonResponse
+     */
     #[Route("/search/title/{title}", methods: ["GET"], requirements: ["title" => "[a-zA-Z\s]+"])]
     public function searchByTitle(string $title): JsonResponse
     {

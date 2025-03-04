@@ -11,12 +11,20 @@ use App\Service\LoanService;
 use App\Service\UserService;
 use App\Repository\LoanRepository;
 
+
+/**
+ * Contrôleur gérant les emprunts et les retours de livres.
+ * Il expose des endpoints pour emprunter, retourner et lister les emprunts en cours.
+ */
 final class LoanController extends AbstractController
 {
     private LoanService $loanService;
     private UserService $userService;
     private BookRepository $bookRepository;
 
+    /**
+     * Injecte les services nécessaires dans le contrôleur.
+     */
     public function __construct(LoanService $loanService, UserService $userService, BookRepository $bookRepository)
     {
         $this->loanService = $loanService;
@@ -25,7 +33,13 @@ final class LoanController extends AbstractController
     }
 
 
-
+    /**
+     * Endpoint permettant d'emprunter un livre.
+     *
+     * @Route("/borrow", methods={"POST"})
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/borrow', methods: ['POST'])]
     public function borrowBook(Request $request): JsonResponse
     {
@@ -74,6 +88,14 @@ final class LoanController extends AbstractController
         }
     }
 
+    /**
+     * Endpoint permettant de retourner un livre et de gérer les pénalités de retard.
+     *
+     * @Route("/return", methods={"PUT"})
+     * @param LoanRepository $loanRepository
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/return', methods: ['PUT'])]
     public function returnBook(LoanRepository $loanRepository, Request $request): JsonResponse
     {
@@ -95,9 +117,11 @@ final class LoanController extends AbstractController
             }
 
             $updatedLoan = $this->loanService->returnBook($loan);
+            $lateFees = $this->loanService->findLateFees($loan);
             return $this->json([
                 'message' => 'Livre retourné avec succès',
                 'loan' => $updatedLoan,
+                'late_fees' => $lateFees . '€',
             ], 200, [], ['groups' => 'loan:read']);
         } catch (\Exception $e) {
             return $this->json([
@@ -107,6 +131,13 @@ final class LoanController extends AbstractController
         }
     }
 
+    /**
+     * Endpoint permettant de récupérer tous les emprunts en cours.
+     *
+     * @Route("/loans", methods={"GET"})
+     * @param LoanRepository $loanRepository
+     * @return JsonResponse
+     */
     #[Route('/loans', methods: ['GET'])]
     public function getCurrentLoans(LoanRepository $loanRepository): JsonResponse
     {

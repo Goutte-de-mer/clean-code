@@ -16,6 +16,13 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
+    /**
+     * Recherche un livre par titre et auteur exacts.
+     *
+     * @param string $title
+     * @param string $author
+     * @return Book|null Renvoie un livre ou null si aucun résultat.
+     */
     public function findByTitleAndAuthor(string $title, string $author): ?Book
     {
         return $this->findOneBy([
@@ -24,6 +31,12 @@ class BookRepository extends ServiceEntityRepository
         ]);
     }
 
+    /**
+     * Recherche les livres dont l'auteur contient une chaîne spécifique (insensible à la casse).
+     *
+     * @param string $author
+     * @return array Liste des livres correspondant au critère de recherche.
+     */
     public function findBooksByAuthorLike(string $author): array
     {
         return $this->createQueryBuilder('b')
@@ -33,6 +46,12 @@ class BookRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Recherche les livres dont le titre contient une chaîne spécifique (insensible à la casse).
+     *
+     * @param string $title
+     * @return array Liste des livres correspondant au critère de recherche.
+     */
     public function findBooksByTitleLike(string $title): array
     {
         return $this->createQueryBuilder('b')
@@ -41,29 +60,4 @@ class BookRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-    //    /**
-    //     * @return Book[] Returns an array of Book objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Book
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

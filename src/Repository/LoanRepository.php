@@ -3,8 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Loan;
-use App\Entity\Book;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,7 +16,12 @@ class LoanRepository extends ServiceEntityRepository
         parent::__construct($registry, Loan::class);
     }
 
-    // countCurrentLoansByUserId
+    /**
+     * Compte le nombre d'emprunts actifs d'un utilisateur.
+     *
+     * @param int $userId ID de l'utilisateur
+     * @return int Nombre d'emprunts en cours
+     */
     public function countCurrentLoansByUserId(int $userId): int
     {
         return (int) $this->createQueryBuilder('l')
@@ -29,6 +32,13 @@ class LoanRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * Trouve un emprunt actif pour un livre donné et un utilisateur donné.
+     *
+     * @param int $bookId ID du livre
+     * @param int $userId ID de l'utilisateur
+     * @return Loan|null Renvoie l'emprunt si trouvé, sinon null
+     */
     public function findCurrentLoansByBookAndUser(int $bookId, int $userId): ?Loan
     {
         return $this->createQueryBuilder('l')
@@ -40,31 +50,4 @@ class LoanRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
-
-
-    //    /**
-    //     * @return Loan[] Returns an array of Loan objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Loan
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
